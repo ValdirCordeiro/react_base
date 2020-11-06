@@ -35,10 +35,14 @@ export default class UsuarioService {
 
     static async buscarUsuarios(nome) {
         try {
-            const usuarios = await api.get(BUSCAR_USUARIOS);
 
-            console.log(usuarios);
+           if(!nome) {
+               nome = "";
+           }
 
+            const usuarios = await api.get(BUSCAR_USUARIOS + `/${nome}`);
+
+            return usuarios.data;
         } catch (error) {
             console.log(error);
         }

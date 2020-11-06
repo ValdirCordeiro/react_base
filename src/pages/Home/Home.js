@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -8,12 +8,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import { Menu } from '../../components/menu/MenuAdmin';
 import useStyles from "./HomeStyles";
 import Copyright from "../../components/menu/Copyright";
@@ -21,11 +20,15 @@ import Inicio from './Inicio';
 import PAGINAS from "../../utils/ConstantesMenu";
 import Usuarios from '../Usuarios/Usuarios';
 import Configuracoes from '../Conf/Configuracoes';
+import { Tooltip } from '@material-ui/core';
+import StoreContext from '../../components/Store/Context';
 
 export default function Home() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [pagina, setPagina] = React.useState(PAGINAS.INICIO);
+
+    const { usuario } = useContext(StoreContext);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -52,14 +55,14 @@ export default function Home() {
                         Sistema Gerencial
                     </Typography>
 
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
+                    <Tooltip title="Editar meu usuário">
+                        <IconButton color="inherit" onClick={() => handleAlterarPagina(PAGINAS.INICIO)}>
+                            <AccountCircle /> <span style={{ fontSize: "1rem", margin: "5px" }}>{usuario.nome}</span>
+                        </IconButton>
+                    </Tooltip>
                 </Toolbar>
             </AppBar>
-           
+
             <Drawer variant="permanent" open={open}
                 classes={{ paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose), }} >
 
@@ -75,7 +78,7 @@ export default function Home() {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                    <Grid container spacing={1}>
+                    <Grid container >
                         {pagina === PAGINAS.INICIO && (<Inicio />)}
                         {pagina === PAGINAS.USUARIOS && (<Usuarios />)}
                         {pagina === PAGINAS.CONFIGURACAO && (<Configuracoes />)}

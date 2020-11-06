@@ -1,9 +1,10 @@
 import React from 'react'
+import TelaPadrao from '../../components/common/TelaPadrao'
 
 export default function Inicio() {
     return (
-        <div>
+        <TelaPadrao titulo="Início">
             Tela Inicial
-        </div>
+        </TelaPadrao>
     )
 }
