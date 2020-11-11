@@ -7,13 +7,13 @@ import TelaPadrao from '../../components/common/TelaPadrao';
 import useStyles from "./UsuarioStyles";
 import CadastroUsuarios from './CadastroUsuarios';
 
-
 export default function Usuarios() {
     const classes = useStyles();
     const [usuarios, setUsuarios] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [isCadastro, setIsCadastro] = useState(false);
     const [nome, setNome] = useState("");
+    const [usuarioEditar, setUsuarioEditar] = useState({});
 
 
     useEffect(() => {
@@ -46,6 +46,21 @@ export default function Usuarios() {
         handleBuscar();
     }
 
+    const handleEditar = (usuarioEdicao) => {
+        setUsuarioEditar(usuarioEdicao);
+        setIsCadastro(true);
+    }
+
+    const handleDeletar = async (usuarioExclusao) => {
+        await UsuarioService.deletarUsuarios(usuarioExclusao.id);
+
+        handleBuscar();
+    }
+
+    const handleFecharTela = (valor) => {
+        setUsuarioEditar({});
+        setIsCadastro(valor);
+    }
 
     return (
         <>
@@ -61,12 +76,12 @@ export default function Usuarios() {
 
                         <Grid container >
                             {carregando && (<span>Carregando</span>)}
-                            {!carregando && (<TabelaUsuarios usuarios={usuarios} />)}
+                            {!carregando && (<TabelaUsuarios usuarios={usuarios} isEditar={handleEditar} isDeletar={handleDeletar}/>)}
                         </Grid>
                     </form>
                 </TelaPadrao>)}
 
-            {isCadastro && (<CadastroUsuarios fecharTela={ (valor) => setIsCadastro(valor)}/>)}
+            {isCadastro && (<CadastroUsuarios fecharTela={handleFecharTela} usuario={usuarioEditar}/>)}
         </>
     )
 }

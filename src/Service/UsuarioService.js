@@ -2,6 +2,7 @@ import api from "../utils/http-common";
 
 const LOGIN = "/login";
 const BUSCAR_USUARIOS = "/usuarios";
+const DELETAR_USUARIOS = "/usuarios";
 
 export default class UsuarioService {
 
@@ -40,9 +41,27 @@ export default class UsuarioService {
                nome = "";
            }
 
-            const usuarios = await api.get(BUSCAR_USUARIOS + `/${nome}`);
+           const usuarios = await api.get(BUSCAR_USUARIOS + `/${nome}`);
 
-            return usuarios.data;
+           return usuarios.data;
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    static async deletarUsuarios(id) {
+        try {
+
+           if(!id) {
+               throw new Error("Erro ao deletar usuario")
+           }
+
+            const resposta = await api.delete(DELETAR_USUARIOS + `/${id}`);
+
+            console.log(resposta);
+
+            return true;
         } catch (error) {
             console.log(error);
         }
