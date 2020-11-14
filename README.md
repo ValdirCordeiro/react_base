@@ -31,3 +31,7 @@ yarn add dotenv
 // Colocar o seguinte trecho no arquivo inicial para funcionar os dorenv
 
 require("dotenv").config();
+
+//Biblioteca para trabalhar com datas
+
+ yarn add moment

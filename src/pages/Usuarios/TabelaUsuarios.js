@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import BotaoAction from '../../components/common/BotaoAction';
 import Dialogo from '../../components/common/Dialogo';
+import DataUtil from '../../utils/DataUtils';
 
 const useStyles = makeStyles({
   table: {
@@ -50,7 +51,7 @@ export default function TabelaUsuarios({ usuarios, isEditar, isDeletar }) {
               <TableCell>Nome</TableCell>
               <TableCell align="center">Login</TableCell>
               <TableCell align="center">Permissão</TableCell>
-              <TableCell align="center">Data</TableCell>
+              <TableCell align="center">Data Criação</TableCell>
               <TableCell align="center">Opções</TableCell>
             </TableRow>
           </TableHead>
@@ -65,7 +66,7 @@ export default function TabelaUsuarios({ usuarios, isEditar, isDeletar }) {
                     </TableCell>
                     <TableCell align="center">{user.login}</TableCell>
                     <TableCell align="center">{user.permissao}</TableCell>
-                    <TableCell align="center">{user.createdAt}</TableCell>
+                    <TableCell align="center">{DataUtil.formatarData(user.createdAt)}</TableCell>
                     <TableCell align="center" style={css.botoes} >
                       <BotaoAction acao={"edit"}  onActionClick={handleEditar} objeto={user}/>
                       <BotaoAction acao={"delete"} onActionClick={handleDeletar}  objeto={user}/>

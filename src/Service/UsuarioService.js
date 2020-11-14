@@ -1,8 +1,7 @@
 import api from "../utils/http-common";
 
 const LOGIN = "/login";
-const BUSCAR_USUARIOS = "/usuarios";
-const DELETAR_USUARIOS = "/usuarios";
+const ROTA_USUARIOS = "/usuarios";
 
 export default class UsuarioService {
 
@@ -41,7 +40,7 @@ export default class UsuarioService {
                nome = "";
            }
 
-           const usuarios = await api.get(BUSCAR_USUARIOS + `/${nome}`);
+           const usuarios = await api.get(ROTA_USUARIOS + `/${nome}`);
 
            return usuarios.data;
         } catch (error) {
@@ -54,10 +53,10 @@ export default class UsuarioService {
         try {
 
            if(!id) {
-               throw new Error("Erro ao deletar usuario")
+               throw new Error("Erro ao deletar usuario");
            }
 
-            const resposta = await api.delete(DELETAR_USUARIOS + `/${id}`);
+            const resposta = await api.delete(ROTA_USUARIOS + `/${id}`);
 
             console.log(resposta);
 
@@ -65,7 +64,30 @@ export default class UsuarioService {
         } catch (error) {
             console.log(error);
         }
+    }
 
+    static async salvarUsuario(usuario) {
+        if(!usuario) {
+            throw new Error("Usuario inválido");
+        }
+        
+        if(usuario.nome === "" || usuario.login === "" || usuario.email === "") {
+            throw new Error("Login, nome e e-mail são obrigatórios.");
+        }
+
+        if(usuario.senha === "" && !usuario.id){
+            throw new Error("É necessário inserir senha para um novo usuário.");
+        }
+
+        const dados = JSON.stringify(usuario);
+
+        if(!usuario.id) {
+            await api.post(ROTA_USUARIOS, dados);
+        } else {
+            await api.put(ROTA_USUARIOS + `/${usuario.id}`, dados);
+        }
+
+        return true;
     }
 }
 

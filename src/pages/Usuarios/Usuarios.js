@@ -6,6 +6,7 @@ import UsuarioService from '../../Service/UsuarioService';
 import TelaPadrao from '../../components/common/TelaPadrao';
 import useStyles from "./UsuarioStyles";
 import CadastroUsuarios from './CadastroUsuarios';
+import Carregando from "../../components/common/Carregando";
 
 export default function Usuarios() {
     const classes = useStyles();
@@ -24,9 +25,7 @@ export default function Usuarios() {
     }, []);
 
     const handleBuscar = async () => {
-        console.log("Buscar usuarios");
         setCarregando(true);
-        console.log(nome);
         const todosUsuarios = await UsuarioService.buscarUsuarios(nome);
 
         setUsuarios(todosUsuarios);        
@@ -53,7 +52,6 @@ export default function Usuarios() {
 
     const handleDeletar = async (usuarioExclusao) => {
         await UsuarioService.deletarUsuarios(usuarioExclusao.id);
-
         handleBuscar();
     }
 
@@ -75,7 +73,7 @@ export default function Usuarios() {
                         </Grid>
 
                         <Grid container >
-                            {carregando && (<span>Carregando</span>)}
+                            {carregando && (<Carregando/>)}
                             {!carregando && (<TabelaUsuarios usuarios={usuarios} isEditar={handleEditar} isDeletar={handleDeletar}/>)}
                         </Grid>
                     </form>

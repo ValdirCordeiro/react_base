@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import TelaPadrao from '../../components/common/TelaPadrao';
 import { Grid, Button, TextField, FormControlLabel, RadioGroup, FormLabel, Radio } from '@material-ui/core';
 import useStyles from "./UsuarioStyles";
+import UsuarioService from '../../Service/UsuarioService';
+import DialogoAviso from '../../components/common/DialogoAviso';
 
 export default function CadastroUsuarios({ fecharTela, usuario }) {
     const classes = useStyles();
@@ -12,6 +14,8 @@ export default function CadastroUsuarios({ fecharTela, usuario }) {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmaSenha, setConfirmaSenha] = useState("");
+    const [openDialogAviso, setOpenDialogAviso ] = useState(false);
+    const [textoAviso, setTextoAviso ] = useState("");
 
     useEffect(() => {
         if(usuario.id !== undefined) {
@@ -21,15 +25,53 @@ export default function CadastroUsuarios({ fecharTela, usuario }) {
         }
 
         //Tratar o radioButton
-        //if()
+        if(usuario.permissao === 'ADMIN') {
+            setPermissao('ADMIN');
+        } else {
+            setPermissao('LEITURA');
+        }
     }, [])
 
     const handleCancelar = async () => {
         fecharTela(false);
     }
 
+    const montarUsuario = () => {
+        usuario.nome = nome;
+        usuario.permissao = permissao;
+        usuario.login = login;
+        usuario.email = email;
+        if(senha) {
+            usuario.senha = senha;
+        }
+    }
+
+    const abrirAviso = (texto) => {
+        setTextoAviso(texto);
+        setOpenDialogAviso(true);
+    }
+
     const handleSalvar = async () => {
+        montarUsuario();
         console.log(usuario);
+        try {         
+            
+            if(senha !== confirmaSenha) {
+                abrirAviso("As senhas digitadas não são iguais.")
+                return;
+            }
+
+            const retorno = await UsuarioService.salvarUsuario(usuario);
+
+            if(retorno) {
+                abrirAviso("Usuário Cadastrado com Sucesso.");
+            } else {
+                abrirAviso("Erro ao cadastrar usuario: ");
+            }
+        } catch (error) {
+            console.log(error);
+            abrirAviso(error.message);
+        }
     }
     
     const handleNome = (event) => {
@@ -52,6 +94,15 @@ export default function CadastroUsuarios({ fecharTela, usuario }) {
         setConfirmaSenha(event.target.value);
     }
 
+    const handlePermissao = (event) => {
+        setPermissao(event.target.value);
+    }
+
+    const handleFechaAviso = () => {
+        setOpenDialogAviso(false);
+        setTextoAviso("");
+    }
+
     return (
         <TelaPadrao titulo="Cadastro de Usuários">
             <form noValidate autoComplete="off">
@@ -63,7 +114,7 @@ export default function CadastroUsuarios({ fecharTela, usuario }) {
 
                     <Grid item xs={12} sm={6}>
                         <FormLabel component="legend">Permissão</FormLabel>
-                        <RadioGroup row aria-label="permissao" name="permissao">
+                        <RadioGroup row aria-label="permissao" name="permissao" value={permissao} onChange={handlePermissao} >
                             <FormControlLabel value="ADMIN" control={<Radio />} label="Administração" />
                             <FormControlLabel value="LEITURA" control={<Radio />} label="Leitura" />
                         </RadioGroup>
@@ -93,6 +144,8 @@ export default function CadastroUsuarios({ fecharTela, usuario }) {
                     </Grid>
                 </Grid>
             </form>
+
+            <DialogoAviso open={openDialogAviso} onClose={handleFechaAviso} handleConfirma={handleFechaAviso} texto={textoAviso}  />
         </TelaPadrao>
     )
 }
